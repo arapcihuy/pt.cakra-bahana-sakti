@@ -1,0 +1,30 @@
+
+> my-v0-project@0.1.0 dev
+> next dev --hostname 0.0.0.0
+
+ ⚠ Port 3000 is in use, trying 3001 instead.
+   ▲ Next.js 15.2.4
+   - Local:        http://localhost:3001
+   - Network:      http://0.0.0.0:3001
+
+ ✓ Starting...
+ ⚠ i18n configuration in next.config.mjs is unsupported in App Router.
+Learn more about internationalization in App Router: https://nextjs.org/docs/app/building-your-application/routing/internationalization
+ ✓ Ready in 1682ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.2s (966 modules)
+ ✓ Compiled in 182ms (443 modules)
+ GET / 200 in 2796ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 836ms (956 modules)
+ GET /favicon.ico 404 in 1124ms
+ GET / 200 in 421ms
+ ⚠ Cross origin request detected from 192.168.11.192 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+ GET /favicon.ico 404 in 227ms
+ GET / 200 in 269ms
+ GET /favicon.ico 404 in 225ms
+ GET /apple-touch-icon.png 404 in 262ms
+ GET /apple-touch-icon-precomposed.png 404 in 267ms
+ GET /favicon.ico 404 in 263ms
+ GET / 200 in 273ms
