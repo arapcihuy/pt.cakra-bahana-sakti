@@ -21,34 +21,17 @@ export function MainLocationSection() {
           {/* Map Section */}
           <div className="order-2 lg:order-1">
             <Card className="border-0 shadow-xl overflow-hidden">
-              <div className="relative h-96 bg-gray-100">
-                {/* Map Placeholder with embedded map styling */}
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-green-100">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <MapPin className="h-16 w-16 text-blue-600 mx-auto mb-4" />
-                      <p className="text-gray-600 font-medium">{t('interactive_map')}</p>
-                      <p className="text-sm text-gray-500">{t('yogyakarta_indonesia')}</p>
-                    </div>
-                  </div>
-                  {/* Simulated map marker */}
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                    <div className="w-6 h-6 bg-red-500 rounded-full animate-pulse shadow-lg"></div>
-                  </div>
-                  {/* Map controls */}
-                  <div className="absolute top-4 left-4 bg-white rounded shadow-md">
-                    <button className="p-2 text-gray-600 hover:text-gray-900">+</button>
-                  </div>
-                  <div className="absolute top-12 left-4 bg-white rounded shadow-md">
-                    <button className="p-2 text-gray-600 hover:text-gray-900">-</button>
-                  </div>
-                </div>
-                <div className="absolute bottom-4 left-4 bg-black bg-opacity-70 text-white px-3 py-1 rounded text-sm">
-                  {t('zoom_map_hint')}
-                </div>
-                <div className="absolute bottom-4 right-4 text-xs text-gray-600 bg-white px-2 py-1 rounded">
-                  {t('openstreetmap_copyright')}
-                </div>
+              <div style={{ borderRadius: 16, overflow: 'hidden', height: 400 }}>
+                <iframe
+                  src="https://www.google.com/maps?q=Jl+Sambisari,+Duwet,+Sendangadi,+Mlati,+Sleman,+Yogyakarta+55511&output=embed"
+                  width="100%"
+                  height="400"
+                  style={{ border: 0 }}
+                  allowFullScreen=""
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Lokasi Cakra Bahana Sakti"
+                ></iframe>
               </div>
             </Card>
           </div>
