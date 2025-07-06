@@ -107,21 +107,31 @@ export function MainLocationSection() {
 
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 mt-8">
-                  <Button className="flex-1 bg-blue-600 hover:bg-blue-700">
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=Jl+Sambisari,+Duwet,+Sendangadi,+Mlati,+Kb.+Arung,+Tridadi,+Sleman,+Sleman+Regency,+Daerah+Istimewa+Yogyakarta+55511"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 h-10 px-4 py-2 flex-1 bg-blue-600 hover:bg-blue-700 text-primary-foreground"
+                  >
                     <Navigation className="h-4 w-4 mr-2" />
                     {t('get_directions')}
-                  </Button>
-                  <Button variant="outline" className="flex-1 bg-transparent">
+                  </a>
+                  <a
+                    href="tel:02742887324"
+                    className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border border-input hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 flex-1 bg-transparent"
+                  >
                     <Phone className="h-4 w-4 mr-2" />
                     {t('call_now')}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="flex-1 bg-green-600 text-white hover:bg-green-700 border-green-600"
+                  </a>
+                  <a
+                    href="https://wa.me/6281225716870"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 border hover:text-accent-foreground h-10 px-4 py-2 flex-1 bg-green-600 text-white hover:bg-green-700 border-green-600"
                   >
                     <MessageSquare className="h-4 w-4 mr-2" />
                     WhatsApp
-                  </Button>
+                  </a>
                 </div>
               </CardContent>
             </Card>
