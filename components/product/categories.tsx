@@ -2,9 +2,19 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Cog, Cpu, Gauge, Shield, Wrench, Zap } from "lucide-react"
 import { useTranslation } from 'react-i18next'
+import { useContext } from "react"
+import { ProductFilterContext } from "./catalog"
 
 export function ProductCategoriesSection() {
   const { t } = useTranslation();
+  const { setKategori } = useContext(ProductFilterContext);
+
+  // Fungsi untuk scroll ke katalog
+  const scrollToCatalog = () => {
+    const el = document.getElementById("product-catalog-section");
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
+
   const categories = [
     {
       icon: Cog,
@@ -85,7 +95,7 @@ export function ProductCategoriesSection() {
                 <p className="text-gray-600 mb-4 leading-relaxed">{category.description}</p>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-gray-500">{category.productCount}</span>
-                  <Button variant="ghost" className="text-orange-600 hover:text-orange-700 p-0">
+                  <Button variant="ghost" className="text-orange-600 hover:text-orange-700 p-0" onClick={() => { setKategori(category.title); scrollToCatalog(); }}>
                     {t('lihat_produk')}
                   </Button>
                 </div>

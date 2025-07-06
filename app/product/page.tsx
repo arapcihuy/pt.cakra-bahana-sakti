@@ -8,6 +8,7 @@ import { FeaturedProductsSection } from "@/components/product/featured-products"
 import { IndustriesSection } from "@/components/product/industries"
 import { TechnicalSpecsSection } from "@/components/product/technical-specs"
 import { ProductCatalogSection } from "@/components/product/catalog"
+import { ProductCatalogProvider } from "@/components/product/catalog"
 
 export default function ProductPage() {
   return (
@@ -15,11 +16,13 @@ export default function ProductPage() {
       <Header />
       <main>
         <ProductHero />
-        <ProductCategoriesSection />
+        <ProductCatalogProvider>
+          <ProductCategoriesSection />
+          <ProductCatalogSection />
+        </ProductCatalogProvider>
         <FeaturedProductsSection />
         <IndustriesSection />
         <TechnicalSpecsSection />
-        <ProductCatalogSection />
       </main>
       <Footer />
     </div>

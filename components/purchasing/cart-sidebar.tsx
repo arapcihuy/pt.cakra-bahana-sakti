@@ -1,46 +1,84 @@
 "use client"
 
-import { useState } from "react"
+import { createContext, useContext, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
 import { ShoppingCart, Plus, Minus, Trash2, X } from "lucide-react"
+import { useTranslation } from "react-i18next"
+import { CheckoutModal } from "./checkout-modal"
+
+type CartItem = {
+  id: number;
+  name: string;
+  model: string;
+  price: number;
+  image?: string;
+  qty: number;
+};
+
+export type CartContextType = {
+  cart: CartItem[];
+  addToCart: (product: CartItem) => void;
+  removeFromCart: (id: number) => void;
+  updateQty: (id: number, qty: number) => void;
+};
+export const CartContext = createContext<CartContextType>({
+  cart: [],
+  addToCart: () => {},
+  removeFromCart: () => {},
+  updateQty: () => {},
+});
+
+export function CartProvider({ children }: { children: React.ReactNode }) {
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const addToCart = (product: CartItem) => {
+    setCart((prev) => {
+      const exist = prev.find((item) => item.id === product.id);
+      if (exist) {
+        return prev.map((item) =>
+          item.id === product.id ? { ...item, qty: item.qty + 1 } : item
+        );
+      }
+      return [...prev, { ...product, qty: 1 }];
+    });
+  };
+  const removeFromCart = (id: number) => {
+    setCart((prev) => prev.filter((item) => item.id !== id));
+  };
+  const updateQty = (id: number, qty: number) => {
+    setCart((prev) => prev.map((item) =>
+      item.id === id ? { ...item, qty } : item
+    ));
+  };
+  return (
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateQty }}>
+      {children}
+    </CartContext.Provider>
+  );
+}
 
 export function CartSidebar() {
+  const { cart, removeFromCart, updateQty } = useContext(CartContext);
+  const { t } = useTranslation();
+  const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   const [isOpen, setIsOpen] = useState(false)
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "BUS SUPPORT BOLTED",
-      model: "CBS-BSB-001",
-      price: 10000000,
-      quantity: 2,
-      image: "/placeholder.svg?height=80&width=80",
-    },
-    {
-      id: 4,
-      name: "SINGLE ARM TEE CONNECTOR",
-      model: "CBS-SAT-004",
-      price: 10000000,
-      quantity: 1,
-      image: "/placeholder.svg?height=80&width=80",
-    },
-  ])
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
 
   const updateQuantity = (id: number, newQuantity: number) => {
     if (newQuantity === 0) {
-      setCartItems(cartItems.filter((item) => item.id !== id))
+      removeFromCart(id)
     } else {
-      setCartItems(cartItems.map((item) => (item.id === id ? { ...item, quantity: newQuantity } : item)))
+      updateQty(id, newQuantity)
     }
   }
 
   const removeItem = (id: number) => {
-    setCartItems(cartItems.filter((item) => item.id !== id))
+    removeFromCart(id)
   }
 
-  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0)
-  const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  const totalItems = cart.reduce((sum, item) => sum + item.qty, 0)
+  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.qty, 0)
 
   return (
     <>
@@ -60,16 +98,13 @@ export function CartSidebar() {
           </SheetTrigger>
           <SheetContent className="w-full sm:max-w-lg">
             <SheetHeader>
-              <SheetTitle className="flex items-center justify-between">
+              <SheetTitle>
                 Shopping Cart ({totalItems} items)
-                <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
-                  <X className="h-4 w-4" />
-                </Button>
               </SheetTitle>
             </SheetHeader>
 
             <div className="flex flex-col h-full">
-              {cartItems.length === 0 ? (
+              {cart.length === 0 ? (
                 <div className="flex-1 flex items-center justify-center">
                   <div className="text-center">
                     <ShoppingCart className="h-16 w-16 text-gray-300 mx-auto mb-4" />
@@ -80,7 +115,7 @@ export function CartSidebar() {
                 <>
                   {/* Cart Items */}
                   <div className="flex-1 overflow-y-auto py-4 space-y-4">
-                    {cartItems.map((item) => (
+                    {cart.map((item) => (
                       <div key={item.id} className="flex gap-4 p-4 border border-gray-200 rounded-lg">
                         <img
                           src={item.image || "/placeholder.svg"}
@@ -96,16 +131,16 @@ export function CartSidebar() {
                                 size="icon"
                                 variant="outline"
                                 className="h-6 w-6 bg-transparent"
-                                onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                onClick={() => updateQuantity(item.id, item.qty - 1)}
                               >
                                 <Minus className="h-3 w-3" />
                               </Button>
-                              <span className="text-sm font-medium w-8 text-center">{item.quantity}</span>
+                              <span className="text-sm font-medium w-8 text-center">{item.qty}</span>
                               <Button
                                 size="icon"
                                 variant="outline"
                                 className="h-6 w-6 bg-transparent"
-                                onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                onClick={() => updateQuantity(item.id, item.qty + 1)}
                               >
                                 <Plus className="h-3 w-3" />
                               </Button>
@@ -120,7 +155,7 @@ export function CartSidebar() {
                             </Button>
                           </div>
                           <div className="text-sm font-bold text-gray-900 mt-2">
-                            Rp{(item.price * item.quantity).toLocaleString("id-ID")}
+                            Rp{(item.price * item.qty).toLocaleString("id-ID")}
                           </div>
                         </div>
                       </div>
@@ -135,7 +170,14 @@ export function CartSidebar() {
                     </div>
 
                     <div className="space-y-2">
-                      <Button className="w-full" size="lg">
+                      <Button 
+                        className="w-full" 
+                        size="lg"
+                        onClick={() => {
+                          setIsOpen(false)
+                          setIsCheckoutOpen(true)
+                        }}
+                      >
                         Proceed to Checkout
                       </Button>
                       <Button variant="outline" className="w-full bg-transparent" onClick={() => setIsOpen(false)}>
@@ -149,6 +191,12 @@ export function CartSidebar() {
           </SheetContent>
         </Sheet>
       </div>
+
+      {/* Checkout Modal */}
+      <CheckoutModal 
+        isOpen={isCheckoutOpen} 
+        onClose={() => setIsCheckoutOpen(false)} 
+      />
     </>
   )
 }

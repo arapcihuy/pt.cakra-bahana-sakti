@@ -46,12 +46,15 @@ export function ProductHero() {
                   <Filter className="h-4 w-4 mr-2" />
                   {t('filter')}
                 </Button>
-                <Button
-                  variant="outline"
-                  className="h-12 border-gray-200 text-gray-700 hover:bg-gray-50 bg-transparent"
+                <a
+                  href="/files/produk.pdf"
+                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="h-12 flex items-center justify-center border border-gray-200 text-gray-700 hover:bg-gray-50 bg-transparent rounded-lg px-4"
                 >
                   <Download className="h-4 w-4" />
-                </Button>
+                </a>
               </div>
             </div>
           </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, createContext, useContext } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,11 +9,32 @@ import { Slider } from "@/components/ui/slider"
 import { Search, X } from "lucide-react"
 import { useTranslation } from 'react-i18next'
 
+export const ProductPurchaseFilterContext = createContext({
+  search: "",
+  setSearch: (s: string) => {},
+  priceRange: [0, 50000000],
+  setPriceRange: (r: [number, number]) => {},
+  selectedCategories: [],
+  setSelectedCategories: (c: string[]) => {},
+  selectedBrands: [],
+  setSelectedBrands: (b: string[]) => {},
+});
+
+export function ProductPurchaseFilterProvider({ children }: { children: React.ReactNode }) {
+  const [search, setSearch] = useState("");
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000000]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
+  return (
+    <ProductPurchaseFilterContext.Provider value={{ search, setSearch, priceRange, setPriceRange, selectedCategories, setSelectedCategories, selectedBrands, setSelectedBrands }}>
+      {children}
+    </ProductPurchaseFilterContext.Provider>
+  );
+}
+
 export function ProductFilters() {
   const { t } = useTranslation();
-  const [priceRange, setPriceRange] = useState([0, 50000000])
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
-  const [selectedBrands, setSelectedBrands] = useState<string[]>([])
+  const { search, setSearch, priceRange, setPriceRange, selectedCategories, setSelectedCategories, selectedBrands, setSelectedBrands } = useContext(ProductPurchaseFilterContext);
 
   const categories = [
     t('support_connectors'),
@@ -46,6 +67,7 @@ export function ProductFilters() {
     setSelectedCategories([])
     setSelectedBrands([])
     setPriceRange([0, 50000000])
+    setSearch("")
   }
 
   return (
@@ -59,7 +81,7 @@ export function ProductFilters() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Input placeholder={t('search_by_name_or_model')} />
+          <Input placeholder={t('search_by_name_or_model')} value={search} onChange={e => setSearch(e.target.value)} />
         </CardContent>
       </Card>
 

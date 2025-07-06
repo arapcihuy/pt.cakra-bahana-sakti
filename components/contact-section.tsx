@@ -55,7 +55,7 @@ export function ContactSection() {
     setFeedback("");
     try {
       const res = await fetch(
-        "https://www.cakrabahanasakti.com/wp-json/contact-form-7/v1/contact-forms/2c783b7/feedback",
+        "https://www.cakrabahanasakti.com/wp-json/contact-form-7/v1/contact-forms/145/feedback",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

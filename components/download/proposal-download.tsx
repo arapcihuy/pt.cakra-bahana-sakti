@@ -4,9 +4,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Download, FileText, Eye, Share2, Mail, Phone } from "lucide-react"
+import { useState } from "react"
 
 export function ProposalDownloadSection() {
   const { t } = useTranslation();
+  const [shareSuccess, setShareSuccess] = useState(false);
+  const handleShare = async () => {
+    const url = typeof window !== 'undefined' ? window.location.origin + '/files/produk.pdf' : '';
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Proposal Perusahaan',
+          text: 'Lihat proposal perusahaan kami',
+          url,
+        });
+      } catch (e) {}
+    } else {
+      try {
+        await navigator.clipboard.writeText(url);
+        setShareSuccess(true);
+        setTimeout(() => setShareSuccess(false), 2000);
+      } catch (e) {}
+    }
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       {/* Hero Section */}
@@ -150,19 +170,33 @@ export function ProposalDownloadSection() {
                     </div>
 
                     <div className="space-y-3">
-                      <Button className="w-full bg-blue-600 hover:bg-blue-700" size="lg">
+                      <a
+                        href="/files/produk.pdf"
+                        download
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg px-4 py-3 text-lg transition-colors"
+                      >
                         <Download className="h-5 w-5 mr-2" />
                         Unduh Proposal (15,2 MB)
-                      </Button>
+                      </a>
                       <div className="flex gap-2">
-                        <Button variant="outline" className="flex-1 bg-transparent">
+                        <a
+                          href="/files/produk.pdf"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 inline-flex items-center justify-center border border-gray-300 rounded-lg px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                        >
                           <Eye className="h-4 w-4 mr-2" />
                           Pratinjau
-                        </Button>
-                        <Button variant="outline" className="flex-1 bg-transparent">
+                        </a>
+                        <Button variant="outline" className="flex-1 bg-transparent" onClick={handleShare}>
                           <Share2 className="h-4 w-4 mr-2" />
                           Bagikan
                         </Button>
+                        {shareSuccess && (
+                          <span className="text-green-600 text-sm ml-2">Link disalin!</span>
+                        )}
                       </div>
                     </div>
                   </div>

@@ -3,9 +3,21 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Star, Download, Eye } from "lucide-react"
 import { useTranslation } from 'react-i18next'
+import { useContext } from "react"
+import { ProductFilterContext } from "./catalog"
+import { useState } from "react"
+import { Dialog, DialogContent } from "@/components/ui/dialog"
 
 export function FeaturedProductsSection() {
   const { t } = useTranslation();
+  const { setKategori } = useContext(ProductFilterContext);
+  const [previewProduct, setPreviewProduct] = useState(null);
+
+  // Fungsi untuk scroll ke katalog
+  const scrollToCatalog = () => {
+    const el = document.getElementById("product-catalog-section");
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
   const products = [
     {
       id: "CBS-SAT-001",
@@ -53,7 +65,7 @@ export function FeaturedProductsSection() {
             <h2 className="text-4xl font-bold text-gray-900 mb-4">{t('produk_unggulan')}</h2>
             <p className="text-xl text-gray-600">{t('desc_produk_unggulan_lengkap')}</p>
           </div>
-          <Button variant="outline" className="hidden md:flex bg-transparent">
+          <Button variant="outline" className="hidden md:flex bg-transparent" onClick={() => { setKategori("Semua Kategori"); scrollToCatalog(); }}>
             {t('lihat_semua_produk')}
           </Button>
         </div>
@@ -69,7 +81,7 @@ export function FeaturedProductsSection() {
                 />
                 <Badge className={`absolute top-4 left-4 ${product.badgeColor} text-white`}>{product.badge}</Badge>
                 <div className="absolute top-4 right-4 flex gap-2">
-                  <Button size="icon" variant="secondary" className="h-8 w-8 bg-white/90 hover:bg-white">
+                  <Button size="icon" variant="secondary" className="h-8 w-8 bg-white/90 hover:bg-white" onClick={() => setPreviewProduct(product)}>
                     <Eye className="h-4 w-4" />
                   </Button>
                   <Button size="icon" variant="secondary" className="h-8 w-8 bg-white/90 hover:bg-white">
@@ -102,10 +114,45 @@ export function FeaturedProductsSection() {
                   <div className="text-lg font-bold text-gray-900">{product.price}</div>
                   <Button className="bg-orange-500 hover:bg-orange-600">{t('dapatkan_penawaran')}</Button>
                 </div>
+                <div className="flex gap-2 mt-4">
+                  <Button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white" asChild>
+                    <a href="mailto:cakrabahanasakti@gmail.com?subject=Minta Penawaran Khusus&body=Halo, saya ingin minta penawaran khusus untuk produk: " target="_blank" rel="noopener noreferrer">
+                      {t('minta_penawaran_khusus')}
+                    </a>
+                  </Button>
+                  <Button className="flex-1 bg-green-600 hover:bg-green-700 text-white" asChild>
+                    <a href="https://wa.me/6281225716870?text=Halo,%20saya%20ingin%20jadwalkan%20konsultasi%20produk" target="_blank" rel="noopener noreferrer">
+                      {t('jadwalkan_konsultasi')}
+                    </a>
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}
         </div>
+        {/* Modal Preview Produk */}
+        <Dialog open={!!previewProduct} onOpenChange={() => setPreviewProduct(null)}>
+          {previewProduct && (
+            <DialogContent>
+              <img src={previewProduct.image} alt={previewProduct.name} className="w-48 h-48 mx-auto mb-4 object-contain" />
+              <h3 className="text-xl font-bold mb-2">{previewProduct.name}</h3>
+              <div className="text-sm text-gray-500 mb-2">{previewProduct.id}</div>
+              <div className="flex items-center gap-2 mb-2">
+                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                <span className="text-sm font-medium ml-1">{previewProduct.rating}</span>
+                <span className="text-sm text-gray-500">({previewProduct.reviews} {t('reviews')})</span>
+              </div>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {previewProduct.features.map((feature, featureIndex) => (
+                  <Badge key={featureIndex} variant="secondary" className="text-xs">
+                    {feature}
+                  </Badge>
+                ))}
+              </div>
+              <Button className="w-full mt-4" onClick={() => setPreviewProduct(null)}>{t('tutup')}</Button>
+            </DialogContent>
+          )}
+        </Dialog>
       </div>
     </section>
   )
