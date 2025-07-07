@@ -4,8 +4,8 @@ import { ScrollToTopButton } from "@/components/ScrollToTopButton";
 import { CartSidebarOpenProvider } from "@/components/CartSidebarOpenProvider";
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
+  title: 'PT. CAKRA BAHANA SAKTI',
+  description: 'Produsen Peralatan Listrik dan Aksesoris Gardu Induk',
   generator: 'v0.dev',
 }
 
