@@ -37,7 +37,7 @@ export function Header() {
                   <img src="/images/logo-cbs.png" alt="CBS Logo" className="h-12 w-auto" />
                 </div>
                 <div className="hidden sm:block">
-                  <div className="text-gray-900 font-bold text-xl">Cakra Bahana Sakti</div>
+                  <div className="text-gray-900 font-bold text-xl">PT. CAKRA BAHANA SAKTI</div>
                   <div className="text-gray-500 text-sm">Solusi Industri</div>
                 </div>
               </Link>

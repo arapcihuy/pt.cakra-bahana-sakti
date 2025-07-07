@@ -40,7 +40,7 @@ export function MainLocationSection() {
           <div className="order-1 lg:order-2">
             <Card className="border-0 shadow-xl">
               <CardContent className="p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-6">{t('cakra_bahana_sakti')}</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-6">PT. CAKRA BAHANA SAKTI</h3>
 
                 <div className="space-y-6">
                   {/* Address */}

@@ -91,7 +91,7 @@ export function Footer() {
         <div className="border-t border-gray-800 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
-              © 2025 Cakra Bahana Sakti. Hak cipta dilindungi undang-undang.
+              © 2025 PT. CAKRA BAHANA SAKTI. Hak cipta dilindungi undang-undang.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <Link href="/privacy" className="text-gray-400 hover:text-white text-sm">
