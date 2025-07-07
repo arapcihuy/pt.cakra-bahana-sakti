@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { ShoppingCart, Plus, Minus, Trash2, X } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { CheckoutModal } from "./checkout-modal"
+import { CartSidebarOpenContext } from "@/components/CartSidebarOpenContext";
 
 type CartItem = {
   id: number;
@@ -62,7 +63,7 @@ export function CartSidebar() {
   const { cart, removeFromCart, updateQty } = useContext(CartContext);
   const { t } = useTranslation();
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-  const [isOpen, setIsOpen] = useState(false)
+  const { open: isOpen, setOpen: setIsOpen } = useContext(CartSidebarOpenContext);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
 
   const updateQuantity = (id: number, newQuantity: number) => {

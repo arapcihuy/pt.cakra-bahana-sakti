@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next"
 import { useContext } from "react"
 import { CartContext } from "./cart-sidebar"
 import { Check, CreditCard, Truck, MapPin, Phone, Mail, User } from "lucide-react"
+import emailjs from "@emailjs/browser"
 
 type CheckoutFormData = {
   fullName: string
@@ -62,7 +63,9 @@ export function CheckoutModal({
     }
   })
 
-  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.qty, 0)
+  const shippingCost = 25000; // default, bisa diganti sesuai kebutuhan
+  const tax = 0; // default, bisa diganti sesuai kebutuhan
+  const totalPrice = cart.reduce((sum, item) => sum + (item.price ?? 0) * item.qty, 0) + shippingCost + tax;
   const totalItems = cart.reduce((sum, item) => sum + item.qty, 0)
 
   const handleInputChange = (field: keyof CheckoutFormData, value: string | boolean) => {
@@ -108,41 +111,47 @@ export function CheckoutModal({
     onClose()
   }
 
-  const handleSubmit = () => {
-    // Here you would typically send the order to your backend
-    console.log("Order submitted:", { formData, cart, totalPrice })
-    
-    // Show success message
-    const successMessage = `Order submitted successfully!
-    
-Order Details:
-- Total Items: ${totalItems}
-- Total Amount: Rp${(totalPrice + (formData.deliveryMethod === "express" ? 50000 : 25000)).toLocaleString("id-ID")}
-- Order ID: #${Math.random().toString(36).substr(2, 9).toUpperCase()}
+  const handleSubmit = async () => {
+    const orderId = `ORDER${Date.now()}`;
+    const shippingCost = 25000;
+    const tax = 0;
+    const totalPrice = cart.reduce((sum, item) => sum + (item.price ?? 0) * item.qty, 0) + shippingCost + tax;
 
-We'll contact you soon at ${formData.email} or ${formData.phone} to confirm your order.`
-    
-    alert(successMessage)
-    onClose()
-    setCurrentStep(1)
-    setFormData({
-      fullName: "",
-      email: "",
-      phone: "",
-      address: "",
-      city: "",
-      postalCode: "",
-      deliveryMethod: "",
-      paymentMethod: "",
-      notes: "",
-      agreeToTerms: false
-    })
-    
-    // Clear saved form data
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('checkout-form-data')
+    const data = {
+      orderId,
+      name: formData.fullName,
+      email: formData.email,
+      phone: formData.phone,
+      address: `${formData.address}, ${formData.city}, ${formData.postalCode}`,
+      delivery: formData.deliveryMethod,
+      payment: formData.paymentMethod,
+      notes: formData.notes,
+      cart: cart.map(item => ({
+        name: item.name,
+        qty: item.qty,
+        price: item.price,
+      })),
+      subtotal: cart.reduce((sum, item) => sum + (item.price ?? 0) * item.qty, 0),
+      shipping: shippingCost,
+      tax,
+      total: totalPrice,
+    };
+
+    try {
+      const res = await fetch("https://formspree.io/f/mjkrddjv", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (res.ok) {
+        alert("Order berhasil dikirim ke admin! Admin akan segera menghubungi Anda.");
+      } else {
+        alert("Gagal mengirim order. Silakan coba lagi.");
+      }
+    } catch (err) {
+      alert("Gagal mengirim order. Silakan cek koneksi internet Anda.");
     }
-  }
+  };
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/

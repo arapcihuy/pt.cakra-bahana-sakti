@@ -49,38 +49,28 @@ export function ContactSection() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log("Form submitted!", form);
     e.preventDefault();
     setLoading(true);
     setFeedback("");
     try {
-      const res = await fetch(
-        "https://www.cakrabahanasakti.com/wp-json/contact-form-7/v1/contact-forms/145/feedback",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ fields: form }),
-        }
-      );
-      let result;
-      try {
-        result = await res.json();
-      } catch (jsonErr) {
-        setFeedback("Gagal membaca respon dari server. Cek koneksi atau konfigurasi backend.");
-        setLoading(false);
-        console.error("JSON parse error:", jsonErr);
-        return;
-      }
-      if (result.status === "mail_sent") {
-        setFeedback("Thank you for your message. It has been sent.");
+      const res = await fetch("https://formspree.io/f/mjkrddjv", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form["your-name"],
+          email: form["your-email"],
+          subject: form["your-subject"],
+          message: form["your-message"],
+        }),
+      });
+      if (res.ok) {
+        setFeedback("Pesan berhasil dikirim ke admin!");
         setForm({ "your-name": "", "your-email": "", "your-subject": "", "your-message": "" });
       } else {
-        setFeedback(result.message || "Sorry, there was a problem sending your message.");
-        console.error("Form submit error:", result);
+        setFeedback("Gagal mengirim pesan. Silakan coba lagi.");
       }
     } catch (err) {
-      setFeedback("Sorry, there was a problem sending your message. (Network/CORS error)");
-      console.error("Network or CORS error:", err);
+      setFeedback("Gagal mengirim pesan. Silakan cek koneksi internet Anda.");
     }
     setLoading(false);
   };

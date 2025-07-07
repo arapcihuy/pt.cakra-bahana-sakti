@@ -6,9 +6,65 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Phone, Mail, Clock, MessageSquare } from "lucide-react"
 import { useTranslation } from "react-i18next"
+import React, { useState, useEffect } from "react";
 
 export function ContactLocationsSection() {
   const { t } = useTranslation();
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    location: "",
+    message: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [feedback, setFeedback] = useState("");
+
+  useEffect(() => {
+    console.log("Form rendered");
+  }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleLocationChange = (value: string) => {
+    setForm({ ...form, location: value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    alert("handleSubmit terpanggil");
+    setLoading(true);
+    setFeedback("");
+    console.log("Form submit triggered", form);
+    try {
+      const res = await fetch("https://formspree.io/f/mjkrddjv", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.firstName + " " + form.lastName,
+          email: form.email,
+          message: form.message,
+        }),
+      });
+      console.log("Formspree response", res);
+      if (res.ok) {
+        setFeedback("Pesan berhasil dikirim ke admin!");
+        setForm({ firstName: "", lastName: "", email: "", phone: "", location: "", message: "" });
+      } else {
+        let errorText = await res.text();
+        setFeedback("Gagal mengirim pesan: " + errorText);
+        console.error("Formspree error detail", errorText);
+      }
+    } catch (err) {
+      setFeedback("Gagal mengirim pesan. Silakan cek koneksi internet Anda.");
+      console.error("Formspree error", err);
+    }
+    setLoading(false);
+  };
+
   const emergencyContacts = [
     {
       region: t('indonesia'),
@@ -56,31 +112,32 @@ export function ContactLocationsSection() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <form className="space-y-6">
+              <div style={{color:'red'}}>DEBUG: Ini form yang kamu edit!</div>
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">{t('first_name')}</label>
-                    <Input placeholder={t('your_first_name')} />
+                    <Input name="firstName" value={form.firstName} onChange={handleChange} placeholder={t('your_first_name')} required />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">{t('last_name')}</label>
-                    <Input placeholder={t('your_last_name')} />
+                    <Input name="lastName" value={form.lastName} onChange={handleChange} placeholder={t('your_last_name')} required />
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">{t('email')}</label>
-                  <Input type="email" placeholder={t('your_email_placeholder')} />
+                  <Input name="email" type="email" value={form.email} onChange={handleChange} placeholder={t('your_email_placeholder')} required />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">{t('phone')}</label>
-                  <Input placeholder={t('your_phone_placeholder')} />
+                  <Input name="phone" value={form.phone} onChange={handleChange} placeholder={t('your_phone_placeholder')} required />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">{t('preferred_location')}</label>
-                  <Select>
+                  <Select value={form.location} onValueChange={handleLocationChange} required>
                     <SelectTrigger>
                       <SelectValue placeholder={t('select_nearest_office')} />
                     </SelectTrigger>
@@ -97,12 +154,13 @@ export function ContactLocationsSection() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">{t('message')}</label>
-                  <Textarea placeholder={t('message_placeholder')} rows={5} />
+                  <Textarea name="message" value={form.message} onChange={handleChange} placeholder={t('message_placeholder')} rows={5} required />
                 </div>
 
-                <Button className="w-full bg-teal-600 hover:bg-teal-700" size="lg">
-                  {t('send_message')}
-                </Button>
+                <button type="submit" className="w-full bg-teal-600 hover:bg-teal-700 text-white py-3 rounded-lg" disabled={loading}>
+                  {loading ? t('loading') : t('send_message')}
+                </button>
+                {feedback && <div className="text-green-600 mt-2">{feedback}</div>}
               </form>
             </CardContent>
           </Card>

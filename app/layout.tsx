@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { ScrollToTopButton } from "@/components/ScrollToTopButton";
+import { CartSidebarOpenProvider } from "@/components/CartSidebarOpenProvider";
 
 export const metadata: Metadata = {
   title: 'v0 App',
@@ -14,7 +16,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <CartSidebarOpenProvider>
+          {children}
+          <ScrollToTopButton />
+        </CartSidebarOpenProvider>
+      </body>
     </html>
   )
 }

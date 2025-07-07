@@ -5,9 +5,49 @@ import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { Phone, Mail, MessageSquare, Car, Bus, Plane, Clock, MapPin } from "lucide-react"
 import { useTranslation } from "react-i18next"
+import React, { useState } from "react";
 
 export function ContactInfoSection() {
   const { t } = useTranslation();
+  const [form, setForm] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [feedback, setFeedback] = useState("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setFeedback("");
+    try {
+      const res = await fetch("https://formspree.io/f/mjkrddjv", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          message: form.message,
+        }),
+      });
+      if (res.ok) {
+        setFeedback("Pesan berhasil dikirim ke admin!");
+        setForm({ name: "", phone: "", email: "", subject: "", message: "" });
+      } else {
+        setFeedback("Gagal mengirim pesan. Silakan coba lagi.");
+      }
+    } catch (err) {
+      setFeedback("Gagal mengirim pesan. Silakan cek koneksi internet Anda.");
+    }
+    setLoading(false);
+  };
 
   return (
     <section className="py-20 bg-white">
@@ -25,32 +65,33 @@ export function ContactInfoSection() {
                 <CardTitle className="text-xl font-bold text-gray-900">{t('kirim_pesan')}</CardTitle>
               </CardHeader>
               <CardContent>
-                <form className="space-y-6">
+                <form className="space-y-6" onSubmit={handleSubmit}>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">{t('nama')}</label>
-                      <Input placeholder={t('nama_lengkap_anda')} />
+                      <Input name="name" value={form.name} onChange={handleChange} placeholder={t('nama_lengkap_anda')} required />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">{t('telepon')}</label>
-                      <Input placeholder={t('nomor_telepon_anda')} />
+                      <Input name="phone" value={form.phone} onChange={handleChange} placeholder={t('nomor_telepon_anda')} />
                     </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">{t('email')}</label>
-                    <Input type="email" placeholder={t('email_anda_placeholder')} />
+                    <Input name="email" type="email" value={form.email} onChange={handleChange} placeholder={t('email_anda_placeholder')} required />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">{t('subjek')}</label>
-                    <Input placeholder={t('subjek_placeholder')} />
+                    <Input name="subject" value={form.subject} onChange={handleChange} placeholder={t('subjek_placeholder')} />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">{t('pesan')}</label>
-                    <Textarea placeholder={t('pesan_placeholder')} rows={5} />
+                    <Textarea name="message" value={form.message} onChange={handleChange} placeholder={t('pesan_placeholder')} rows={5} required />
                   </div>
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700" size="lg">
-                    {t('kirim_pesan')}
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700" size="lg" type="submit" disabled={loading}>
+                    {loading ? t('loading') : t('kirim_pesan')}
                   </Button>
+                  {feedback && <div className="text-green-600 mt-2">{feedback}</div>}
                 </form>
               </CardContent>
             </Card>
