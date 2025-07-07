@@ -16,6 +16,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/favicon.ico" />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "PT. CAKRA BAHANA SAKTI",
+            "url": "https://www.cakrabahanasakti.com/",
+            "logo": "https://www.cakrabahanasakti.com/images/logo-cbs.png"
+          })
+        }} />
+        <meta name="description" content="PT. CAKRA BAHANA SAKTI adalah produsen peralatan listrik, aksesoris gardu induk, dan solusi industri terpercaya di Indonesia." />
+      </head>
       <body>
         <CartSidebarOpenProvider>
           {children}
